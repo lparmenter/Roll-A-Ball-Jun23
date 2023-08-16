@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour
     public GameObject resetPoint;
     bool resetting = false;
     Color originalColour;
+    GameController gameController;
+
+    //Controllers
+    CameraController cameraController;
 
     [Header("UI")]
     public GameObject inGamePanel;
@@ -39,6 +43,8 @@ public class PlayerController : MonoBehaviour
         winPanel.SetActive(false);
         resetPoint = GameObject.FindGameObjectWithTag("Reset");
         originalColour = GetComponent<Renderer>().material.color;
+        gameController = FindObjectOfType<GameController>();
+        cameraController = FindObjectOfType<CameraController>();
     }
 
     private void Update()
@@ -61,8 +67,16 @@ public class PlayerController : MonoBehaviour
         float moveVertical = Input.GetAxis("Vertical");
 
         Vector3 movement = new Vector3(moveHorizontal, 0, moveVertical);
+   
+
+        if (cameraController.cameraStyle == CameraStyle.Free)
+        {
+            //Rotates the players to the direction of the camera
+            transform.eulerAngles = Camera.main.transform.eulerAngles;
+            //translate the input vectors into coordinates
+            movement = transform.TransformDirection(movement);
+        }
         rb.AddForce(movement * speed);
-          
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -70,6 +84,12 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Respawn"))
         {
             StartCoroutine(ResetPlayer());
+        }
+
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            if (gameController.wallType == WallType.Punishing)
+                StartCoroutine(ResetPlayer());
         }
     }
 
