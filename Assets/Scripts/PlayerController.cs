@@ -30,8 +30,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>(); 
-        //Get the number of pickups inour scene
-        pickupCount = GameObject.FindGameObjectsWithTag("Pick Up").Length;
+        //Get the number of pickups in our scene
+        pickupCount = GameObject.FindGameObjectsWithTag("Pick Up").Length + GameObject.FindGameObjectsWithTag("BloodyRock").Length;
         //Run the check pickups funtcion 
         CheckPickups();
         //Get the timer object
@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
         originalColour = GetComponent<Renderer>().material.color;
         gameController = FindObjectOfType<GameController>();
         cameraController = FindObjectOfType<CameraController>();
+        
     }
 
     private void Update()
@@ -141,6 +142,13 @@ public class PlayerController : MonoBehaviour
            
         }
     }
+
+    public void BloodyRock()
+    {
+        pickupCount += 1;
+        CheckPickups();
+    }
+
 
     void WinGame()
     {

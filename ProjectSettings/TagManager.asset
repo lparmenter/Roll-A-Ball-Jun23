@@ -8,6 +8,7 @@ TagManager:
   - Reset
   - Wall
   - Ground
+  - BloodyRock
   layers:
   - Default
   - TransparentFX
