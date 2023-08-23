@@ -14,10 +14,11 @@ public class PlayerController : MonoBehaviour
     public GameObject resetPoint;
     bool resetting = false;
     Color originalColour;
-    GameController gameController;
+    public GameObject jumpScarePanel;
 
     //Controllers
     CameraController cameraController;
+    GameController gameController;
 
     [Header("UI")]
     public GameObject inGamePanel;
@@ -86,7 +87,11 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(ResetPlayer());
         }
-
+        if (collision.gameObject.CompareTag("Axe"))
+        {
+            StartCoroutine(ResetPlayer());
+            jumpScarePanel.SetActive(true);
+        }
         if (collision.gameObject.CompareTag("Wall"))
         {
             if (gameController.wallType == WallType.Punishing)
@@ -109,6 +114,7 @@ public class PlayerController : MonoBehaviour
             transform.position = Vector3.Lerp(startPos, resetPoint.transform.position, i);
             yield return null;
         }
+        jumpScarePanel.SetActive(false);
         GetComponent<Renderer>().material.color = originalColour;
         resetting = false;
 
