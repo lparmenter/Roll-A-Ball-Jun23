@@ -20,24 +20,25 @@ public class PlayerController : MonoBehaviour
     CameraController cameraController;
     GameController gameController;
 
-    [Header("UI")]
+    
     public GameObject inGamePanel;
     public GameObject winPanel;
     public TMP_Text scoreText;
     public TMP_Text timerText;
     public TMP_Text winTimeText;
-
+    [Header("Particles")]
+    public GameObject pickupParticle;
     // Start is called before the first frame update
     void Start()
     {
+
         rb = GetComponent<Rigidbody>(); 
         //Get the number of pickups in our scene
-        pickupCount = GameObject.FindGameObjectsWithTag("Pick Up").Length + GameObject.FindGameObjectsWithTag("BloodyRock").Length;
+        pickupCount = GameObject.FindGameObjectsWithTag("Pick Up").Length;
         //Run the check pickups funtcion 
         CheckPickups();
         //Get the timer object
         timer = FindObjectOfType<Timer>();
-        timer.StartTimer();
         //Turn on our in game panel
         inGamePanel.SetActive(true);
         //Turn on our in game panel
@@ -46,7 +47,13 @@ public class PlayerController : MonoBehaviour
         originalColour = GetComponent<Renderer>().material.color;
         gameController = FindObjectOfType<GameController>();
         cameraController = FindObjectOfType<CameraController>();
-        
+
+        if (gameController.gameType == GameType.SpeedRun)
+        {
+            StartCoroutine(timer.StartCountdown());
+        }
+
+
     }
 
     private void Update()
@@ -57,6 +64,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (gameController.gameType == GameType.SpeedRun && !timer.IsTiming())
+            return;
+
         if (resetting)
             return;
 
@@ -134,6 +144,8 @@ public class PlayerController : MonoBehaviour
             pickupCount -= 1;
             //Run the check pickups funtcion 
             CheckPickups();
+            //Create particle effect
+            Instantiate(pickupParticle, transform.position, transform.rotation);
         }
     }
 
@@ -172,6 +184,11 @@ public class PlayerController : MonoBehaviour
         //Set the velocity of the ridgedbody to zero
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+
+        if(gameController.gameType == GameType.SpeedRun)
+        {
+            timer.StopTimer();
+        }
     }
 
     //Temporary - Remove when doing mdules in A2

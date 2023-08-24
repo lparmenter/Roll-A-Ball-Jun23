@@ -17,10 +17,14 @@ public class MovingObjects : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
 
     }
-
+    private int GetRandomPosition()
+    {
+        int i = Random.Range(0, moveToPositions.Length);
+        return i;
+    }
     IEnumerator MoveInDirection()
     {
-        Vector3 _newPos = moveToPositions[currentPosition].position;
+        Vector3 _newPos = moveToPositions[GetRandomPosition()].position;
         while (Vector3.Distance(transform.position, _newPos) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, _newPos, moveSpeed * Time.deltaTime);
